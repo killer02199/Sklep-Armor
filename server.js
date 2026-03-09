@@ -179,12 +179,6 @@ function requireAuth(req, res, next) {
     res.redirect('/?error=unauthorized');
 }
 
-app.use(express.static(path.join(__dirname)));
-
-app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'login.html'));
-});
-
 app.get('/', (req, res) => {
     if (req.session.isAuthenticated) {
         res.sendFile(path.join(__dirname, 'index.html'));
@@ -192,6 +186,8 @@ app.get('/', (req, res) => {
         res.sendFile(path.join(__dirname, 'login.html'));
     }
 });
+
+app.use(express.static(path.join(__dirname)));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
