@@ -187,7 +187,9 @@ app.get('/', (req, res) => {
     }
 });
 
-app.use(express.static(path.join(__dirname)));
+app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/style.css', express.static(path.join(__dirname, 'style.css')));
+app.use('/script.js', express.static(path.join(__dirname, 'script.js')));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
