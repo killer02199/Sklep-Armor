@@ -31,10 +31,10 @@ const ALLOWED_ROLES = [
 ];
 
 const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID || '1474406038483505376';
-const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || 'YOUR_CLIENT_SECRET';
+const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || '4B8yCL_N_NDFwYiImUiIckiJFR1r9AHp';
 const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID || '1308450446758645811';
 const CALLBACK_URL = process.env.CALLBACK_URL || 'http://localhost:3000/auth/discord/callback';
-const SESSION_SECRET = process.env.SESSION_SECRET || 'tajny-klucz-sesji-zmien-go';
+const SESSION_SECRET = process.env.SESSION_SECRET || 'iAMHXK7hWkfltrfiYs0rwX4DnJkUzj2FfwGrXycPRjDiYG0fEM';
 
 app.use(session({
     secret: SESSION_SECRET,
