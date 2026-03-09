@@ -1,0 +1,18 @@
+{
+  "name": "armor-shop-discord-auth",
+  "version": "1.0.0",
+  "description": "Discord OAuth2 authentication for armor shop",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "passport": "^0.7.0",
+    "passport-discord": "^0.1.4",
+    "dotenv": "^16.3.1",
+    "node-fetch": "^2.7.0"
+  }
+}

@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sklep Armor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        
+        .hero-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(135deg, rgba(10, 10, 15, 0.7) 0%, rgba(10, 10, 15, 0.7) 100%),
+                url('images/Background.png');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
+
+        
+        header {
+            background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+            padding: 25px;
+            text-align: center;
+            border-bottom: 1px solid #2a2a2a;
+            position: relative;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+        }
+
+        header h1 {
+            font-family: 'Michroma', sans-serif;
+            font-size: 1.6rem;
+            letter-spacing: 6px;
+            background: linear-gradient(90deg, #fff 0%, #aaa 50%, #fff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleShine 3s ease-in-out infinite;
+        }
+        
+        @keyframes titleShine {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .faction-box {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+        .faction-box select {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            color: #aaa;
+            border: 1px solid #444;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .faction-box select:hover {
+            border-color: #00d4ff;
+            color: white;
+        }
+        .faction-box select:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+        .faction-box select option {
+            background: #1a1a1a;
+            color: white;
+            padding: 10px;
+        }
+
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: -400px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-left: 4px solid #00d4ff;
+            padding: 18px 30px;
+            border-radius: 8px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 10000;
+            transition: right 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            min-width: 300px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .notification.show {
+            right: 20px;
+        }
+        .notification.success {
+            border-color: #4CAF50;
+            background: linear-gradient(135deg, #1a2e1a 0%, #2d4a2d 100%);
+        }
+        .notification.error {
+            border-color: #f44336;
+            background: linear-gradient(135deg, #2e1a1a 0%, #4a2d2d 100%);
+        }
+        .notif-icon {
+            font-size: 24px;
+            width: 32px;
+            text-align: center;
+        }
+        .notification.success .notif-icon { color: #4CAF50; }
+        .notification.error .notif-icon { color: #f44336; }
+        .notification.info .notif-icon { color: #00d4ff; }
+        .notif-text {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .page-layout {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 40px;
+        }
+
+        
+        .vest-section {
+            background: linear-gradient(145deg, #111116, #0a0a0e);
+            border-radius: 24px;
+            padding: 50px;
+            border: 1px solid #1e1e28;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vest-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at 50% 0%, rgba(0, 212, 255, 0.05) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        
+        .vest-graphic {
+            position: relative;
+            width: 280px;
+            height: 420px;
+        }
+
+        
+        .vest-body {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #141419 0%, #0c0c10 50%, #141419 100%);
+            border-radius: 30px;
+            border: 2px solid #252530;
+            position: relative;
+            box-shadow: 
+                0 25px 60px rgba(0, 0, 0, 0.8),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        
+        .plate-area {
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95px;
+            height: 70px;
+            background: linear-gradient(180deg, #0d0d12 0%, #08080a 100%);
+            border-radius: 12px;
+            border: 1px solid #222228;
+        }
+
+        
+        .side-panels {
+            position: absolute;
+            width: 55px;
+            height: 310px;
+            top: 50px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 12px 8px;
+        }
+
+        .side-panels.left { left: -50px; }
+        .side-panels.right { right: -50px; }
+
+        .side-slot {
+            flex: 1;
+            background: #0d0d12;
+            border-radius: 10px;
+            border: 1px solid #1a1a22;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        .side-slot.active {
+            background: linear-gradient(180deg, #00d4ff 0%, #0099cc 100%);
+            border-color: #00d4ff;
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            transform: scale(1.05);
+        }
+
+        .side-slot i {
+            font-size: 1.1rem;
+        }
+
+        
+        .front-area {
+            position: absolute;
+            bottom: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 14px;
+        }
+
+        .front-slot {
+            width: 60px;
+            height: 70px;
+            background: #0d0d12;
+            border-radius: 12px;
+            border: 1px solid #1a1a22;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: #333;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .front-slot.active {
+            background: linear-gradient(180deg, #00d4ff 0%, #0099cc 100%);
+            border-color: #00d4ff;
+            color: #000;
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.6);
+            transform: scale(1.1);
+        }
+
+        .front-slot i {
+            font-size: 1.2rem;
+        }
+
+        
+        .center-badge {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(145deg, #00d4ff, #007799);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 0 40px rgba(0, 212, 255, 0.6),
+                inset 0 2px 8px rgba(255, 255, 255, 0.3);
+            z-index: 10;
+            animation: badgePulse 3s ease-in-out infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 0 40px rgba(0, 212, 255, 0.6), inset 0 2px 8px rgba(255, 255, 255, 0.3); }
+            50% { box-shadow: 0 0 60px rgba(0, 212, 255, 0.9), inset 0 2px 12px rgba(255, 255, 255, 0.4); }
+        }
+
+        .center-badge .percent {
+            font-family: 'Michroma', sans-serif;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .center-badge .label {
+            font-size: 0.35rem;
+            color: #003344;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .vest-title {
+            margin-top: 30px;
+            font-family: 'Michroma', sans-serif;
+            font-size: 1.2rem;
+            color: #00d4ff;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        
+        .config-panel {
+            background: linear-gradient(180deg, #111116 0%, #0a0a0e 100%);
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid #1e1e28;
+        }
+
+        .panel-title {
+            font-family: 'Michroma', sans-serif;
+            font-size: 0.9rem;
+            color: #00d4ff;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #1e1e28;
+        }
+
+        .section-label {
+            font-size: 0.7rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin: 20px 0 12px;
+        }
+
+        
+        .opt-item {
+            padding: 16px;
+            background: linear-gradient(135deg, #0d0d12 0%, #08080c 100%);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            border: 1px solid #1a1a24;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .opt-item:hover {
+            border-color: #333;
+            background: linear-gradient(135deg, #12121a 0%, #0a0a0f 100%);
+        }
+
+        .opt-item.selected {
+            border-color: #00d4ff;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.03) 100%);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.15), inset 0 0 20px rgba(0, 212, 255, 0.05);
+        }
+
+        .opt-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .opt-icon {
+            width: 42px;
+            height: 42px;
+            background: #1a1a24;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .opt-item.selected .opt-icon {
+            background: #00d4ff;
+            color: #000;
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.8), 0 0 50px rgba(0, 212, 255, 0.4);
+        }
+
+        .opt-type {
+            border-left: 3px solid #ff00ff !important;
+        }
+        .opt-type.selected {
+            border-left-color: #ff00ff !important;
+            background: rgba(255, 0, 255, 0.1);
+        }
+
+        .opt-text {
+            flex: 1;
+        }
+
+        .opt-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 2px;
+        }
+
+        .opt-desc {
+            font-size: 0.7rem;
+            color: #555;
+        }
+
+        .opt-price {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #00ff88;
+            min-width: 90px;
+            text-align: right;
+        }
+
+        .opt-item.selected .opt-price {
+            color: #00d4ff;
+        }
+
+        .opt-qty {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 15px;
+        }
+
+        .mini-qty-btn {
+            width: 28px;
+            height: 28px;
+            border: 2px solid #444;
+            border-radius: 6px;
+            background: #1a1a1a;
+            color: #888;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mini-qty-btn:hover {
+            border-color: #00d4ff;
+            color: #00d4ff;
+            background: #252525;
+        }
+
+        .mini-qty-val {
+            min-width: 30px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #00d4ff;
+        }
+
+        #cartSummary {
+            margin-top: 15px;
+            padding: 15px;
+            background: #0a0a0f;
+            border-radius: 10px;
+            border: 1px solid #1a1a24;
+        }
+
+        #cartItemsList {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        
+        .qty-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+            padding: 18px;
+            background: #0a0a0f;
+            border-radius: 14px;
+            border: 1px solid #1a1a24;
+        }
+
+        .qty-btn {
+            width: 44px;
+            height: 44px;
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            background: transparent;
+            color: #00d4ff;
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qty-btn:hover {
+            background: #00d4ff;
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .qty-input {
+            width: 70px;
+            height: 44px;
+            text-align: center;
+            border: 2px solid #222;
+            border-radius: 10px;
+            background: #050508;
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: 700;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .qty-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        
+        .total-box {
+            background: linear-gradient(135deg, #00d4ff 0%, #0088aa 100%);
+            border-radius: 18px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .total-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shine 4s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .total-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: rgba(0, 0, 0, 0.6);
+            font-weight: 600;
+        }
+
+        .total-value {
+            font-family: 'Michroma', sans-serif;
+            font-size: 2rem;
+            color: #000;
+            margin-top: 5px;
+        }
+
+        
+        .discount-box {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .discount-input {
+            flex: 1;
+            padding: 14px;
+            border: 2px solid #222;
+            border-radius: 10px;
+            background: #050508;
+            color: #fff;
+            font-size: 1rem;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .discount-input:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+
+        .discount-btn {
+            padding: 14px 22px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #00ff88, #00cc66);
+            color: #000;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .discount-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .discount-show {
+            text-align: center;
+            color: #00ff88;
+            margin-top: 10px;
+            font-size: 0.95rem;
+        }
+
+        
+        .reset-btn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 14px;
+            border: 1px solid #333;
+            border-radius: 10px;
+            background: transparent;
+            color: #666;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .reset-btn:hover {
+            border-color: #ff4444;
+            color: #ff4444;
+        }
+
+        @media (max-width: 1000px) {
+            .page-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false">
+    <script>
+        // Disable right click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        // Disable F12 and DevTools
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                (e.ctrlKey && e.shiftKey && e.key === 'J') ||
+                (e.ctrlKey && e.key === 'u') ||
+                (e.ctrlKey && e.key === 'U')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // Disable Ctrl+P (Print)
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+    <div class="hero-bg"></div>
+    
+    <header>
+        <h1>🛡️ SKLEP ARMOR</h1>
+        <div id="userInfo" style="position:absolute;top:15px;right:20px;font-size:14px;"></div>
+    </header>
+    
+    <div class="container">
+        <div class="faction-box">
+            <select id="faction" onchange="updateFaction()">
+                <option value="">Wybierz firme...</option>
+                <option value="brak">Brak</option>
+                <option value="sluzba_wiezienna">Służba Więzienna</option>
+                <option value="sluzba_zarzad">Służba Więzienna Zarząd</option>
+                <option value="lspd_zarzad">LSPD Zarząd</option>
+                <option value="lspd_pracownik">LSPD Pracownik</option>
+                <option value="tropical_pracownik">Tropical Pracownik</option>
+                <option value="tropical_zarzad">Tropical Zarząd</option>
+                <option value="vesuvio_pracownik">Vesuvio Pracownik</option>
+                <option value="vesuvio_zarzad">Vesuvio Zarząd</option>
+                <option value="uwu_pracownik">UwU Pracownik</option>
+                <option value="uwu_zarzad">UwU Zarząd</option>
+                <option value="gruppe6">Gruppe 6</option>
+                <option value="winiarnia_pracownik">Winiarnia Pracownik</option>
+                <option value="winiarnia_zarzad">Winiarnia Zarząd</option>
+                <option value="bahama">Bahama Mamas</option>
+                <option value="puffpass_pracownik">Puff Puff Pass Pracownik</option>
+                <option value="puffpass_zarzad">Puff Puff Pass Zarząd</option>
+                <option value="tuners">Tuners</option>
+                <option value="oslo">Oslo Racing</option>
+                <option value="tequila">Tequila La La</option>
+                <option value="rentmaster_pracownik">Rent Master Pracownik</option>
+                <option value="rentmaster_zarzad">Rent Master Zarząd</option>
+            </select>
+        </div>
+        <div class="page-layout">
+
+            <div class="vest-section">
+                <div class="vest-graphic">
+                    <div class="vest-body">
+                        <div class="plate-area"></div>
+                    </div>
+                    
+                    <div class="side-panels left">
+                        <div class="side-slot" id="slotL1"><i class="fas fa-lightbulb"></i></div>
+                        <div class="side-slot" id="slotL2"><i class="fas fa-walkie-talkie"></i></div>
+                        <div class="side-slot" id="slotL3"><i class="fas fa-id-card"></i></div>
+                    </div>
+                    
+                    <div class="side-panels right">
+                        <div class="side-slot" id="slotR1"><i class="fas fa-box"></i></div>
+                        <div class="side-slot" id="slotR2"><i class="fas fa-medkit"></i></div>
+                        <div class="side-slot" id="slotR3"><i class="fas fa-id-card"></i></div>
+                    </div>
+                    
+                    <div class="front-area">
+                        <div class="front-slot" id="slotF1"><i class="fas fa-gun"></i></div>
+                        <div class="front-slot" id="slotF2"><i class="fas fa-bolt"></i></div>
+                        <div class="front-slot" id="slotF3"><i class="fas fa-box"></i></div>
+                    </div>
+                    
+                    <div class="center-badge">
+                        <i class="fas fa-shield-alt badge-icon"></i>
+                        <span class="percent" id="badgePercent">--</span>
+                        <span class="label">PROTECT</span>
+                    </div>
+                </div>
+                
+                <div class="vest-title" id="vestTitle">Wybierz Kamizelkę</div>
+            </div>
+
+            <div class="config-panel">
+                <div class="panel-title"><i class="fas fa-cogs"></i> Konfiguracja</div>
+                
+                <div class="section-label">Płyty Pancerne</div>
+                <div class="opt-item" id="item-vest35" onclick="toggleProduct('vest35')">
+                    <div class="opt-info">
+                        <div class="opt-icon"><i class="fas fa-user-shield"></i></div>
+                        <div class="opt-text">
+                            <div class="opt-name">Kamizelka 35%</div>
+                            <div class="opt-desc">Klasyczna ochrona</div>
+                        </div>
+                    </div>
+                    <div class="opt-price">10,000 $</div>
+                    <div class="opt-qty">
+                        <button class="mini-qty-btn" onclick="event.stopPropagation();updateItemQty('vest35', -1)">−</button>
+                        <span class="mini-qty-val" id="qty-vest35">0</span>
+                        <button class="mini-qty-btn" onclick="event.stopPropagation();updateItemQty('vest35', 1)">+</button>
+                    </div>
+                </div>
+                <div class="opt-item" id="item-vest50" onclick="toggleProduct('vest50')">
+                    <div class="opt-info">
+                        <div class="opt-icon"><i class="fas fa-shield-halved"></i></div>
+                        <div class="opt-text">
+                            <div class="opt-name">Kamizelka 50%</div>
+                            <div class="opt-desc">Wzmocniona ochrona</div>
+                        </div>
+                    </div>
+                    <div class="opt-price">20,000 $</div>
+                    <div class="opt-qty">
+                        <button class="mini-qty-btn" onclick="event.stopPropagation();updateItemQty('vest50', -1)">−</button>
+                        <span class="mini-qty-val" id="qty-vest50">0</span>
+                        <button class="mini-qty-btn" onclick="event.stopPropagation();updateItemQty('vest50', 1)">+</button>
+                    </div>
+                </div>
+                <div class="opt-item" id="item-vest75" onclick="toggleProduct('vest75')">
+                    <div class="opt-info">
+                        <div class="opt-icon"><i class="fas fa-shield"></i></div>
+                        <div class="opt-text">
+                            <div class="opt-name">Kamizelka 75%</div>
+                            <div class="opt-desc">Maksymalna ochrona</div>
+                        </div>
+                    </div>
+                    <div class="opt-price">35,000 $</div>
+                    <div class="opt-qty">
+                        <button class="mini-qty-btn" onclick="event.stopPropagation();updateItemQty('vest75', -1)">−</button>
+                        <span class="mini-qty-val" id="qty-vest75">0</span>
+                        <button class="mini-qty-btn" onclick="event.stopPropagation();updateItemQty('vest75', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="section-label">Akcesoria</div>
+                <div class="opt-item" id="item-kabura" onclick="toggleProduct('kabura')">
+                    <div class="opt-info">
+                        <div class="opt-icon"><i class="fas fa-gun"></i></div>
+                        <div class="opt-text">
+                            <div class="opt-name">Kabura taktyczna</div>
+                        </div>
+                    </div>
+                    <div class="opt-price">250,000 $</div>
+                    <div class="opt-qty">
+                        <button class="mini-qty-btn" onclick="event.stopPropagation();updateItemQty('kabura', -1)">−</button>
+                        <span class="mini-qty-val" id="qty-kabura">0</span>
+                        <button class="mini-qty-btn" onclick="event.stopPropagation();updateItemQty('kabura', 1)">+</button>
+                    </div>
+                </div>
+                <div class="opt-item" id="item-latarka" onclick="toggleProduct('latarka')">
+                    <div class="opt-info">
+                        <div class="opt-icon"><i class="fas fa-bolt"></i></div>
+                        <div class="opt-text">
+                            <div class="opt-name">Latarka do broni</div>
+                        </div>
+                    </div>
+                    <div class="opt-price">25,000 $</div>
+                    <div class="opt-qty">
+                        <button class="mini-qty-btn" onclick="event.stopPropagation();updateItemQty('latarka', -1)">−</button>
+                        <span class="mini-qty-val" id="qty-latarka">0</span>
+                        <button class="mini-qty-btn" onclick="event.stopPropagation();updateItemQty('latarka', 1)">+</button>
+                    </div>
+                </div>
+                <div class="opt-item" id="item-magazynek" onclick="toggleProduct('magazynek')">
+                    <div class="opt-info">
+                        <div class="opt-icon"><i class="fas fa-box"></i></div>
+                        <div class="opt-text">
+                            <div class="opt-name">Powiększony magazynek</div>
+                        </div>
+                    </div>
+                    <div class="opt-price">60,000 $</div>
+                    <div class="opt-qty">
+                        <button class="mini-qty-btn" onclick="event.stopPropagation();updateItemQty('magazynek', -1)">−</button>
+                        <span class="mini-qty-val" id="qty-magazynek">0</span>
+                        <button class="mini-qty-btn" onclick="event.stopPropagation();updateItemQty('magazynek', 1)">+</button>
+                    </div>
+                </div>
+                <div class="opt-item" id="item-latarkaReczna" onclick="toggleProduct('latarkaReczna')">
+                    <div class="opt-info">
+                        <div class="opt-icon"><i class="fas fa-lightbulb"></i></div>
+                        <div class="opt-text">
+                            <div class="opt-name">Latarka ręczna</div>
+                        </div>
+                    </div>
+                    <div class="opt-price">50,000 $</div>
+                    <div class="opt-qty">
+                        <button class="mini-qty-btn" onclick="event.stopPropagation();updateItemQty('latarkaReczna', -1)">−</button>
+                        <span class="mini-qty-val" id="qty-latarkaReczna">0</span>
+                        <button class="mini-qty-btn" onclick="event.stopPropagation();updateItemQty('latarkaReczna', 1)">+</button>
+                    </div>
+                </div>
+                <div class="opt-item" id="item-zlote" onclick="toggleProduct('zlote')">
+                    <div class="opt-info">
+                        <div class="opt-icon"><i class="fas fa-gem"></i></div>
+                        <div class="opt-text">
+                            <div class="opt-name">Złote malowanie</div>
+                        </div>
+                    </div>
+                    <div class="opt-price">280,000 $</div>
+                    <div class="opt-qty">
+                        <button class="mini-qty-btn" onclick="event.stopPropagation();updateItemQty('zlote', -1)">−</button>
+                        <span class="mini-qty-val" id="qty-zlote">0</span>
+                        <button class="mini-qty-btn" onclick="event.stopPropagation();updateItemQty('zlote', 1)">+</button>
+                    </div>
+                </div>
+                <div class="opt-item" id="item-magPistolet" onclick="toggleProduct('magPistolet')">
+                    <div class="opt-info">
+                        <div class="opt-icon"><i class="fas fa-box"></i></div>
+                        <div class="opt-text">
+                            <div class="opt-name">Magazynek do pistoletu</div>
+                        </div>
+                    </div>
+                    <div class="opt-price">3,800 $</div>
+                    <div class="opt-qty">
+                        <button class="mini-qty-btn" onclick="event.stopPropagation();updateItemQty('magPistolet', -1)">−</button>
+                        <span class="mini-qty-val" id="qty-magPistolet">0</span>
+                        <button class="mini-qty-btn" onclick="event.stopPropagation();updateItemQty('magPistolet', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="total-box">
+                    <div class="total-label">Suma Do Zapłaty</div>
+                    <div class="total-value" id="totalPrice">0 $ (0 szt.)</div>
+                </div>
+
+                <div class="discount-box" style="display:none;">
+                    <input type="number" class="discount-input" id="discountField" placeholder="Zniżka %">
+                    <button class="discount-btn" onclick="applyDiscount()">OK</button>
+                </div>
+                <div class="discount-show" id="discountShow" style="display:none;">
+                    Zniżka: <span id="discountAmount">-0 $</span></div>
+
+                <!-- Podsumowanie koszyka -->
+                <div id="cartSummary">
+                    <div class="section-label">Podsumowanie</div>
+                    <div id="cartItemsList">Brak produktów</div>
+                </div>
+
+                <button class="reset-btn" onclick="resetAll()"><i class="fas fa-redo"></i> Resetuj Konfigurację</button>
+
+                <button class="reset-btn" onclick="saveSale()" style="background:linear-gradient(135deg,#4CAF50,#2E7D32);margin-top:10px;box-shadow:0 5px 25px rgba(76,175,80,0.5),0 0 40px rgba(76,175,80,0.2);border:none;transition:all 0.3s;" onmouseover="this.style.boxShadow='0 5px 35px rgba(76,175,80,0.7),0 0 60px rgba(76,175,80,0.4)'" onmouseout="this.style.boxShadow='0 5px 25px rgba(76,175,80,0.5),0 0 40px rgba(76,175,80,0.2)'"><i class="fas fa-save"></i> Zapisz Sprzedaż</button>
+                <button class="reset-btn" onclick="showStats()" style="background:linear-gradient(135deg,#2196F3,#1565C0);margin-top:10px;box-shadow:0 5px 25px rgba(33,150,243,0.5),0 0 40px rgba(33,150,243,0.2);border:none;transition:all 0.3s;" onmouseover="this.style.boxShadow='0 5px 35px rgba(33,150,243,0.7),0 0 60px rgba(33,150,243,0.4)'" onmouseout="this.style.boxShadow='0 5px 25px rgba(33,150,243,0.5),0 0 40px rgba(33,150,243,0.2)'"><i class="fas fa-chart-bar"></i> Pokaż Statystyki</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get Discord user info
+        let currentUser = null;
+        
+        fetch('/api/auth/status')
+            .then(res => res.json())
+            .then(data => {
+                if (data.authenticated) {
+                    currentUser = data.user;
+                    const userDiv = document.getElementById('userInfo');
+                    if (userDiv) {
+                        userDiv.innerHTML = `<span style="color:#00ff88;"><i class="fas fa-user"></i> ${currentUser.username}</span>`;
+                    }
+                }
+            })
+            .catch(err => console.log('Not logged in'));
+
+        // Store - ALL products have their own quantity now (like a real cart)
+        let cart = {
+            // Kamizelki
+            products: {
+                vest35: { price: 10000, name: 'Kamizelka 35%', type: 'vest', level: 35, qty: 0 },
+                vest50: { price: 20000, name: 'Kamizelka 50%', type: 'vest', level: 50, qty: 0 },
+                vest75: { price: 35000, name: 'Kamizelka 75%', type: 'vest', level: 75, qty: 0 },
+                // Akcesoria
+                kabura: { price: 250000, name: 'Kabura taktyczna', type: 'accessory', slot: 'slotF1', qty: 0 },
+                latarka: { price: 25000, name: 'Latarka do broni', type: 'accessory', slot: 'slotF2', qty: 0 },
+                magazynek: { price: 60000, name: 'Powiększony magazynek', type: 'accessory', slot: 'slotF3', qty: 0 },
+                latarkaReczna: { price: 50000, name: 'Latarka ręczna', type: 'accessory', slot: 'slotL1', qty: 0 },
+                zlote: { price: 280000, name: 'Złote malowanie', type: 'special', qty: 0 },
+                magPistolet: { price: 3800, name: 'Magazynek do pistoletu', type: 'accessory', slot: 'slotR1', qty: 0 }
+            },
+            discount: 0
+        };
+
+        // Update quantity for a specific item
+        function updateItemQty(itemId, delta) {
+            if (cart.products[itemId]) {
+                const newQty = Math.max(0, cart.products[itemId].qty + delta);
+                cart.products[itemId].qty = newQty;
+                document.getElementById('qty-' + itemId).textContent = newQty;
+                
+                updateProductDisplay(itemId, newQty);
+            }
+            
+            calc();
+        }
+
+        // Toggle product - click to add 1, click again to remove
+        function toggleProduct(itemId) {
+            if (cart.products[itemId]) {
+                if (cart.products[itemId].qty > 0) {
+                    // If already has quantity, remove it (set to 0)
+                    cart.products[itemId].qty = 0;
+                } else {
+                    // If no quantity, add 1
+                    cart.products[itemId].qty = 1;
+                }
+                document.getElementById('qty-' + itemId).textContent = cart.products[itemId].qty;
+                
+                updateProductDisplay(itemId, cart.products[itemId].qty);
+            }
+            
+            calc();
+        }
+
+        // Update product visual display
+        function updateProductDisplay(itemId, qty) {
+            const el = document.getElementById('item-' + itemId);
+            if (el) {
+                if (qty > 0) {
+                    el.classList.add('selected');
+                    // Activate slot for accessories
+                    if (cart.products[itemId].slot) {
+                        document.getElementById(cart.products[itemId].slot).classList.add('active');
+                    }
+                    // Update vest badge for vest types
+                    if (cart.products[itemId].type === 'vest') {
+                        updateVestDisplay();
+                    }
+                } else {
+                    el.classList.remove('selected');
+                    if (cart.products[itemId].slot) {
+                        document.getElementById(cart.products[itemId].slot).classList.remove('active');
+                    }
+                    // Update vest badge
+                    if (cart.products[itemId].type === 'vest') {
+                        updateVestDisplay();
+                    }
+                }
+            }
+        }
+
+        // Update vest display based on what's selected
+        function updateVestDisplay() {
+            const vests = ['vest35', 'vest50', 'vest75'];
+            let totalVests = 0;
+            let highestLevel = 0;
+            
+            vests.forEach(id => {
+                if (cart.products[id].qty > 0) {
+                    totalVests += cart.products[id].qty;
+                    if (cart.products[id].level > highestLevel) {
+                        highestLevel = cart.products[id].level;
+                    }
+                }
+            });
+            
+            if (totalVests > 0) {
+                document.getElementById('badgePercent').textContent = highestLevel + '%';
+                document.getElementById('vestTitle').textContent = totalVests + ' kamizelek';
+                document.getElementById('vestTitle').style.color = '#00d4ff';
+            } else {
+                document.getElementById('badgePercent').textContent = '--';
+                document.getElementById('vestTitle').textContent = 'BRAK KAMIZELKI';
+                document.getElementById('vestTitle').style.color = '#666';
+            }
+        }
+
+        // Calculate total
+        function calc() {
+            const faction = document.getElementById('faction').value;
+            const discounts = factionDiscounts[faction] || { vest: 0, accessories: 0, special: 0 };
+            
+            let total = 0;
+            let totalItems = 0;
+            
+            // Calculate each product total
+            for (let itemId in cart.products) {
+                const item = cart.products[itemId];
+                if (item.qty > 0) {
+                    let itemPrice = item.price;
+                    
+                    // Apply discounts based on type
+                    if (item.type === 'vest') {
+                        itemPrice = itemPrice * (1 - discounts.vest / 100);
+                    } else if (item.type === 'special') {
+                        itemPrice = itemPrice * (1 - discounts.special / 100);
+                    } else if (itemId === 'magPistolet' && (faction === 'lspd_zarzad' || faction === 'lspd_pracownik')) {
+                        // LSPD special price
+                        itemPrice = 3200;
+                    } else {
+                        itemPrice = itemPrice * (1 - discounts.accessories / 100);
+                    }
+                    
+                    total += itemPrice * item.qty;
+                    totalItems += item.qty;
+                }
+            }
+            
+            document.getElementById('totalPrice').textContent = format(total) + ' (' + totalItems + ' szt.)';
+            
+            // Update cart summary
+            updateCartSummary();
+            
+            // Show discount info
+            if (discounts.vest > 0 || discounts.accessories > 0) {
+                let discountText = '';
+                if (discounts.vest > 0) discountText += `Kamizelka: -${discounts.vest}%`;
+                if (discounts.accessories > 0) discountText += (discountText ? ', ' : '') + `Akcesoria: -${discounts.accessories}%`;
+                document.getElementById('discountShow').style.display = 'block';
+                document.getElementById('discountAmount').textContent = discountText;
+            } else {
+                document.getElementById('discountShow').style.display = 'none';
+            }
+        }
+
+        // Update cart summary display
+        function updateCartSummary() {
+            const faction = document.getElementById('faction').value;
+            const discounts = factionDiscounts[faction] || { vest: 0, accessories: 0, special: 0 };
+            
+            let summaryItems = [];
+            
+            for (let itemId in cart.products) {
+                const item = cart.products[itemId];
+                if (item.qty > 0) {
+                    let itemPrice = item.price;
+                    
+                    // Calculate discounted price
+                    if (item.type === 'vest') {
+                        itemPrice = item.price * (1 - discounts.vest / 100);
+                    } else if (itemId === 'magPistolet' && (faction === 'lspd_zarzad' || faction === 'lspd_pracownik')) {
+                        itemPrice = 3200;
+                    } else if (item.type === 'special') {
+                        itemPrice = item.price * (1 - discounts.special / 100);
+                    } else {
+                        itemPrice = item.price * (1 - discounts.accessories / 100);
+                    }
+                    
+                    let itemTotal = itemPrice * item.qty;
+                    summaryItems.push({
+                        name: item.name,
+                        qty: item.qty,
+                        total: itemTotal
+                    });
+                }
+            }
+            
+            const listEl = document.getElementById('cartItemsList');
+            if (summaryItems.length === 0) {
+                listEl.innerHTML = '<span style="color: #666;">Brak produktów</span>';
+            } else {
+                listEl.innerHTML = summaryItems.map(i => 
+                    `<div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #1a1a24;">
+                        <span>${i.name} × ${i.qty}</span>
+                        <span style="color: #00d4ff;">${format(i.total)}</span>
+                    </div>`
+                ).join('');
+            }
+        }
+
+        function format(num) {
+            return num.toLocaleString('pl-PL') + ' $';
+        }
+
+        // Keep vest selection for click-to-add functionality (compatibility)
+        function chooseVest(level, price, cls, el) {
+            toggleProduct('vest' + level);
+        }
+
+        // Keep accessory add for compatibility
+        function addAccessory(id, price, slot, el, special = false) {
+            toggleProduct(id);
+        }
+
+        // Vest type selection (kept for compatibility)
+        function chooseVestType(type, el) {
+            document.querySelectorAll('.opt-type').forEach(i => i.classList.remove('selected'));
+            el.classList.add('selected');
+            showNotification(`Wybrano: ${el.querySelector('.opt-name').textContent}`, 'info');
+        }
+
+        // Discount
+        function applyDiscount() {
+            cart.discount = Math.min(100, Math.max(0, parseFloat(document.getElementById('discountField').value) || 0));
+            calc();
+        }
+
+        // Reset
+        function resetAll() {
+            // Reset all products
+            for (let itemId in cart.products) {
+                cart.products[itemId].qty = 0;
+            }
+            cart.discount = 0;
+            
+            // Reset all UI quantities
+            document.querySelectorAll('.mini-qty-val').forEach(el => el.textContent = '0');
+            
+            // Reset UI selections
+            document.querySelectorAll('.opt-item').forEach(i => i.classList.remove('selected'));
+            document.querySelectorAll('.side-slot, .front-slot').forEach(s => s.classList.remove('active'));
+            
+            document.getElementById('badgePercent').textContent = '--';
+            document.getElementById('vestTitle').textContent = 'Wybierz Kamizelkę';
+            document.getElementById('vestTitle').style.color = '#666';
+            document.getElementById('discountField').value = '';
+            document.getElementById('discountField').style.borderColor = '#222';
+            document.getElementById('discountField').style.color = '#fff';
+            document.getElementById('faction').value = '';
+            
+            calc();
+        }
+
+        // Faction discounts - different for vest vs accessories
+        const factionDiscounts = {
+            'brak': { vest: 0, accessories: 0, special: 0 },
+            'sluzba_wiezienna': { vest: 35, accessories: 25, special: 25 },
+            'sluzba_zarzad': { vest: 35, accessories: 25, special: 25 },
+            'lspd_zarzad': { vest: 40, accessories: 30, special: 30 },
+            'lspd_pracownik': { vest: 40, accessories: 30, special: 30 },
+            'tropical_pracownik': { vest: 15, accessories: 15, special: 15 },
+            'tropical_zarzad': { vest: 20, accessories: 20, special: 20 },
+            'vesuvio_pracownik': { vest: 25, accessories: 25, special: 25 },
+            'vesuvio_zarzad': { vest: 35, accessories: 35, special: 35 },
+            'uwu_pracownik': { vest: 20, accessories: 20, special: 20 },
+            'uwu_zarzad': { vest: 25, accessories: 25, special: 25 },
+            'gruppe6': { vest: 0, accessories: 0, special: 0 },
+            'winiarnia_pracownik': { vest: 20, accessories: 20, special: 20 },
+            'winiarnia_zarzad': { vest: 25, accessories: 25, special: 25 },
+            'bahama': { vest: 0, accessories: 0, special: 0 },
+            'puffpass_pracownik': { vest: 20, accessories: 20, special: 20 },
+            'puffpass_zarzad': { vest: 30, accessories: 30, special: 30 },
+            'tuners': { vest: 0, accessories: 0, special: 0 },
+            'oslo': { vest: 0, accessories: 0, special: 0 },
+            'tequila': { vest: 0, accessories: 0, special: 0 },
+            'rentmaster_pracownik': { vest: 20, accessories: 20, special: 20 },
+            'rentmaster_zarzad': { vest: 25, accessories: 25, special: 25 }
+        };
+
+        const factionNames = {
+            'brak': 'Brak',
+            'sluzba_wiezienna': 'Służba Więzienna',
+            'sluzba_zarzad': 'Służba Więzienna Zarząd',
+            'lspd_zarzad': 'LSPD Zarząd',
+            'lspd_pracownik': 'LSPD Pracownik',
+            'tropical_pracownik': 'Tropical Pracownik',
+            'tropical_zarzad': 'Tropical Zarząd',
+            'vesuvio_pracownik': 'Vesuvio Pracownik',
+            'vesuvio_zarzad': 'Vesuvio Zarząd',
+            'uwu_pracownik': 'UwU Pracownik',
+            'uwu_zarzad': 'UwU Zarząd',
+            'gruppe6': 'Gruppe 6',
+            'winiarnia_pracownik': 'Winiarnia Pracownik',
+            'winiarnia_zarzad': 'Winiarnia Zarząd',
+            'bahama': 'Bahama Mamas',
+            'puffpass_pracownik': 'Puff Puff Pass Pracownik',
+            'puffpass_zarzad': 'Puff Puff Pass Zarząd',
+            'tuners': 'Tuners',
+            'oslo': 'Oslo Racing',
+            'tequila': 'Tequila La La',
+            'rentmaster_pracownik': 'Rent Master Pracownik',
+            'rentmaster_zarzad': 'Rent Master Zarząd'
+        };
+
+        // Stats storage
+        let salesStats = JSON.parse(localStorage.getItem('armorSalesStats')) || {};
+
+        function updateFaction() {
+            const faction = document.getElementById('faction').value;
+            const discounts = factionDiscounts[faction] || { vest: 0, accessories: 0, special: 0 };
+            
+            const discountField = document.getElementById('discountField');
+            const discountShow = document.getElementById('discountShow');
+            
+            if (faction && (discounts.vest > 0 || discounts.accessories > 0)) {
+                // Show the main discount in the field
+                let mainDiscount = Math.max(discounts.vest, discounts.accessories);
+                discountField.value = mainDiscount + '%';
+                discountField.style.borderColor = '#00ff88';
+                discountField.style.color = '#00ff88';
+                
+                let msg = `Zniżki dla ${factionNames[faction]}:
+`;
+                if (discounts.vest > 0) msg += `• Kamizelka: ${discounts.vest}%
+`;
+                if (discounts.accessories > 0) msg += `• Akcesoria: ${discounts.accessories}%
+`;
+                if (faction === 'lspd_zarzad' || faction === 'lspd_pracownik') {
+                    msg += `• Mag. Pistolet: 3200$ (zamiast 3800$)`;
+                }
+                showNotification(msg, 'success');
+            } else if (faction === 'brak' || faction === 'gruppe6' || faction === 'bahama' || faction === 'tuners' || faction === 'oslo' || faction === 'tequila') {
+                discountField.value = '0%';
+                discountField.style.borderColor = '#666';
+                discountField.style.color = '#666';
+                showNotification('Brak zniżki dla tej firmy', 'info');
+            } else if (faction) {
+                discountField.value = '0%';
+                discountField.style.borderColor = '#666';
+                discountField.style.color = '#666';
+                showNotification('Brak zniżki dla tej firmy', 'info');
+            } else {
+                discountField.value = '';
+                discountField.style.borderColor = '#333';
+                discountField.style.color = '#aaa';
+            }
+            
+            calc();
+        }
+
+        function showNotification(message, type = 'info') {
+            const notif = document.createElement('div');
+            notif.className = `notification ${type}`;
+            notif.innerHTML = `
+                <span class="notif-icon">${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span>
+                <span class="notif-text">${message}</span>
+            `;
+            document.body.appendChild(notif);
+            
+            setTimeout(() => notif.classList.add('show'), 10);
+            setTimeout(() => {
+                notif.classList.remove('show');
+                setTimeout(() => notif.remove(), 300);
+            }, 3000);
+        }
+
+        function saveSale() {
+            const faction = document.getElementById('faction').value;
+            const total = document.getElementById('totalPrice').textContent;
+            const sellerName = currentUser ? currentUser.username : 'Nieznany';
+            
+            if (!faction) {
+                showNotification('Wybierz firmę przed zapisem!', 'error');
+                return;
+            }
+            
+            const finalPrice = parseInt(total.replace(/[^0-9]/g, '')) || 0;
+            
+            // Create unique key for faction + seller combination
+            const statsKey = faction + '_' + sellerName;
+            
+            if (salesStats[statsKey]) {
+                salesStats[statsKey].sales++;
+                salesStats[statsKey].revenue += finalPrice;
+            } else {
+                salesStats[statsKey] = {
+                    name: factionNames[faction],
+                    seller: sellerName,
+                    sales: 1,
+                    revenue: finalPrice
+                };
+            }
+            
+            localStorage.setItem('armorSalesStats', JSON.stringify(salesStats));
+            showNotification(`Sprzedaż zapisana! ${factionNames[faction]} - ${total} (${sellerName})`, 'success');
+        }
+
+        function showStats() {
+            const modal = document.getElementById('statsModal');
+            const statsContent = document.getElementById('statsContent');
+            
+            const sorted = Object.values(salesStats).sort((a, b) => b.revenue - a.revenue);
+            
+            let html = '<h3>📊 Statystyki Sprzedaży</h3>';
+            if (sorted.length === 0) {
+                html += '<p>Brak zapisanych sprzedaży.</p>';
+            } else {
+                sorted.forEach((s, i) => {
+                    let sellerInfo = s.seller ? ` <span style="color:#ffaa00;font-size:12px;">(@${s.seller})</span>` : '';
+                    html += `<div class="stat-row"><span>#${i+1} ${s.name}${sellerInfo}</span><span>${s.sales} sprzedaży / ${s.revenue.toLocaleString()}</span></div>`;
+                });
+            }
+            
+            statsContent.innerHTML = html;
+            modal.style.display = 'flex';
+        }
+
+        function clearStats() {
+            if (confirm('Czy na pewno zresetować wszystkie statystyki?')) {
+                salesStats = {};
+                localStorage.removeItem('armorSalesStats');
+                showNotification('Statystyki zostały zresetowane!', 'success');
+                document.getElementById('statsModal').style.display = 'none';
+            }
+        }
+
+        calc();
+    </script>
+
+    <div id="statsModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('statsModal').style.display='none'">&times;</span>
+            <div id="statsContent"></div>
+            <button onclick="clearStats()" style="margin-top:20px;background:#f44336;color:white;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;">Resetuj Statystyki</button>
+        </div>
+    </div>
+
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 10px;
+            color: white;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #aaa;
+        }
+        .close:hover { color: white; }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #333;
+        }
+
+        
+        .total-box {
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.5), 0 0 80px rgba(0, 212, 255, 0.3), inset 0 0 40px rgba(255,255,255,0.15) !important;
+        }
+        .discount-btn {
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5), 0 5px 20px rgba(0,0,0,0.3);
+        }
+        .reset-btn {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        .qty-btn {
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+        .vest-title {
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
+        }
+        .side-slot.active, .front-slot.active {
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.8), 0 0 60px rgba(0, 212, 255, 0.4);
+        }
+        .badge-icon {
+            font-size: 12px;
+            color: #003344;
+            margin-bottom: -2px;
+        }
+        
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.85);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+            padding: 40px;
+            border-radius: 20px;
+            color: white;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            border: 1px solid #333;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(0, 212, 255, 0.1);
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #333;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .stat-row:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+        .stat-row span:first-child {
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        .stat-row span:last-child {
+            color: #00ff88;
+        }
+        
+        
+        .qty-input {
+            width: 80px;
+            height: 50px;
+            text-align: center;
+            background: linear-gradient(135deg, #1a1a24, #0d0d15);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            color: #00d4ff;
+            font-size: 1.3rem;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.2), inset 0 0 10px rgba(0, 212, 255, 0.05);
+        }
+
+        .qty-input:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
+            color: #00ff88;
+        }
+        
+        .qty-btn {
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+        .qty-btn:hover {
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.7), 0 0 50px rgba(0, 212, 255, 0.3);
+        }
+        
+        .reset-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+
+    <div style="position:fixed;bottom:10px;right:15px;color:rgba(255,255,255,0.15);font-size:14px;font-family:'Rajdhani',sans-serif;z-index:9999;pointer-events:none;">made by killer02</div>
+</body>
+</html>
