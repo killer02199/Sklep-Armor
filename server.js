@@ -2,18 +2,15 @@ require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
-const DiscordStrategy = require('passport-discord');
+const DiscordStrategy = require('passport-discord').Strategy;
 const path = require('path');
 const fetch = require('node-fetch');
 const fs = require('fs');
 
 const app = express();
+app.set('trust proxy', 1);
 
 const ALLOWED_ROLES = [
-    '1308450447014494274',
-    '1465806412952113373',
-    '1416737946526023711',
-    '1308450447014494273',
     '1308450447014494271',
     '1308450447014494270',
     '1447687593205563522',
@@ -27,21 +24,31 @@ const ALLOWED_ROLES = [
     '1308450446955909154',
     '1324111106209218711',
     '1308450446955909157',
-    '1308450446955909159'
+    '1308450447014494274',
+    '1416737946526023711',
+    '1308450447014494273'
 ];
 
-const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID || '1474406038483505376';
-const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || '4B8yCL_N_NDFwYiImUiIckiJFR1r9AHp';
-const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID || '1308450446758645811';
+const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID;
+const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
+const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID;
 const CALLBACK_URL = process.env.CALLBACK_URL || 'http://localhost:3000/auth/discord/callback';
-const SESSION_SECRET = process.env.SESSION_SECRET || 'iAMHXK7hWkfltrfiYs0rwX4DnJkUzj2FfwGrXycPRjDiYG0fEM';
+const SESSION_SECRET = process.env.SESSION_SECRET;
+
+const isProduction = process.env.NODE_ENV === 'production';
+const isVercel = !!process.env.VERCEL;
+const HISTORY_FILE = isVercel
+    ? '/tmp/login_history.json'
+    : path.join(__dirname, 'login_history.json');
 
 app.use(session({
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: true,
+        secure: isProduction,
+        httpOnly: true,
+        sameSite: 'lax',
         maxAge: 24 * 60 * 60 * 1000
     }
 }));
@@ -58,7 +65,11 @@ passport.use(new DiscordStrategy({
     callbackURL: CALLBACK_URL,
     scope: ['identify', 'guilds', 'guilds.members.read']
 }, (accessToken, refreshToken, profile, done) => {
-    process.nextTick(() => done(null, profile));
+    process.nextTick(() => done(null, {
+        ...profile,
+        accessToken,
+        refreshToken
+    }));
 }));
 
 async function checkUserRoles(userId, accessToken) {
@@ -67,18 +78,21 @@ async function checkUserRoles(userId, accessToken) {
             `https://discord.com/api/users/@me/guilds/${DISCORD_GUILD_ID}/member`,
             {
                 headers: {
-                    'Authorization': `Bearer ${accessToken}`
+                    Authorization: `Bearer ${accessToken}`
                 }
             }
         );
+
         if (!response.ok) {
             console.log('Nie udało się pobrać danych członka');
             return false;
         }
+
         const memberData = await response.json();
         const userRoles = memberData.roles || [];
         const hasAllowedRole = userRoles.some(roleId => ALLOWED_ROLES.includes(roleId));
-        console.log(`Użytkownik ${userId}: role ${JSON.stringify(userRoles)}, dozwolone: ${ALLOWED_ROLES.includes(userRoles[0])}`);
+
+        console.log(`Użytkownik ${userId}: role=${JSON.stringify(userRoles)}, dostęp=${hasAllowedRole}`);
         return hasAllowedRole;
     } catch (error) {
         console.error('Błąd sprawdzania ról:', error);
@@ -87,34 +101,42 @@ async function checkUserRoles(userId, accessToken) {
 }
 
 function saveLoginHistory(userId, username) {
-    const historyFile = path.join(__dirname, 'login_history.json');
     let history = [];
-    if (fs.existsSync(historyFile)) {
+
+    if (fs.existsSync(HISTORY_FILE)) {
         try {
-            history = JSON.parse(fs.readFileSync(historyFile, 'utf8'));
+            history = JSON.parse(fs.readFileSync(HISTORY_FILE, 'utf8'));
         } catch (e) {
             history = [];
         }
     }
+
     const entry = {
-        userId: userId,
-        username: username,
+        userId,
+        username,
         timestamp: new Date().toISOString(),
         date: new Date().toLocaleString('pl-PL')
     };
+
     history.unshift(entry);
+
     if (history.length > 100) {
         history = history.slice(0, 100);
     }
-    fs.writeFileSync(historyFile, JSON.stringify(history, null, 2));
+
+    try {
+        fs.writeFileSync(HISTORY_FILE, JSON.stringify(history, null, 2));
+    } catch (error) {
+        console.error('Błąd zapisu historii logowań:', error);
+    }
+
     console.log(`[LOGIN] ${username} (${userId}) - ${entry.date}`);
 }
 
 function getLoginHistory() {
-    const historyFile = path.join(__dirname, 'login_history.json');
-    if (fs.existsSync(historyFile)) {
+    if (fs.existsSync(HISTORY_FILE)) {
         try {
-            return JSON.parse(fs.readFileSync(historyFile, 'utf8'));
+            return JSON.parse(fs.readFileSync(HISTORY_FILE, 'utf8'));
         } catch (e) {
             return [];
         }
@@ -124,12 +146,20 @@ function getLoginHistory() {
 
 app.get('/auth/discord', passport.authenticate('discord'));
 
-app.get('/auth/discord/callback', 
+app.get(
+    '/auth/discord/callback',
     passport.authenticate('discord', { failureRedirect: '/?error=unauthorized' }),
     async (req, res) => {
         try {
-            const accessToken = req.session.passport.user.accessToken;
+            const accessToken = req.user?.accessToken;
+
+            if (!accessToken) {
+                console.error('Brak accessToken');
+                return res.redirect('/?error=authfailed');
+            }
+
             const hasAccess = await checkUserRoles(req.user.id, accessToken);
+
             if (hasAccess) {
                 req.session.discordUser = {
                     id: req.user.id,
@@ -137,22 +167,24 @@ app.get('/auth/discord/callback',
                     avatar: req.user.avatar
                 };
                 req.session.isAuthenticated = true;
+
                 saveLoginHistory(req.user.id, req.user.username);
-                res.redirect('/');
+                return res.redirect('/');
             } else {
-                res.redirect('/?error=noaccess');
+                return res.redirect('/?error=noaccess');
             }
         } catch (error) {
             console.error('Błąd callback:', error);
-            res.redirect('/?error=authfailed');
+            return res.redirect('/?error=authfailed');
         }
     }
 );
 
 app.get('/auth/logout', (req, res) => {
     req.logout(() => {
-        req.session.destroy();
-        res.redirect('/');
+        req.session.destroy(() => {
+            res.redirect('/');
+        });
     });
 });
 
